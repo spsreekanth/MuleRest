@@ -1,0 +1,42 @@
+import org.springframework.web.client.RestTemplate;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
+
+public class RestApiClient {
+
+    private RestTemplate restTemplate;
+    private String apiUrl;
+    private String accessTokenUri;
+    private String clientId;
+    private String clientSecret;
+
+    public RestApiClient(String apiUrl, String accessTokenUri, String clientId, String clientSecret) {
+        this.apiUrl = apiUrl;
+        this.accessTokenUri = accessTokenUri;
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+
+        ClientCredentialsResourceDetails resourceDetails = new ClientCredentialsResourceDetails();
+        resourceDetails.setAccessTokenUri(accessTokenUri);
+        resourceDetails.setClientId(clientId);
+        resourceDetails.setClientSecret(clientSecret);
+
+        restTemplate = new OAuth2RestTemplate(resourceDetails);
+    }
+
+    public <T> T getForObject(String url, Class<T> responseType, Object... urlVariables) {
+        return restTemplate.getForObject(apiUrl + url, responseType, urlVariables);
+    }
+
+    public <T> T postForObject(String url, Object request, Class<T> responseType, Object... urlVariables) {
+        return restTemplate.postForObject(apiUrl + url, request, responseType, urlVariables);
+    }
+
+    public <T> T putForObject(String url, Object request, Class<T> responseType, Object... urlVariables) {
+        return restTemplate.putForObject(apiUrl + url, request, responseType, urlVariables);
+    }
+
+    public void delete(String url, Object... urlVariables) {
+        restTemplate.delete(apiUrl + url, urlVariables);
+    }
+}
